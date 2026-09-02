@@ -54,6 +54,7 @@
    * for page margins, so panels align with the page edge.
    */
   --spacing-gutter: 1.25rem;
+  --spacing-header: 3.5rem; /* sticky header height; anchors offset by it */
   --spacing-panel: 1.75rem;
   --spacing-section: clamp(2.5rem, 6vw, 4.5rem);
 
@@ -101,6 +102,12 @@
 
 :root {
   color-scheme: light dark;
+
+  /* Next.js skips fixed and sticky elements when it picks a scroll target, so
+   * anchor navigation would land section headings under the header. Padding
+   * the scroll container by the header height plus one gutter clears it. */
+  scroll-padding-top: calc(var(--spacing-header) + var(--spacing-gutter));
+  scroll-behavior: smooth;
 }
 
 @layer base {

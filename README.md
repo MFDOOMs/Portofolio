@@ -50,6 +50,10 @@ Implemented so far:
   reusable UI primitives (see [Design System](#design-system))
 - Light and dark palettes driven by `prefers-color-scheme`
 - Reduced-motion support and a visible keyboard focus style
+- Sticky page header with the name, section anchors, and a GitHub call to action
+- Mobile section menu as a keyboard-accessible disclosure below `md`
+- Skip-to-content link as the first focusable element on the page
+- Hero section introducing Tristan's identity, with GitHub and project CTAs
 
 Planned features are tracked in [Development Progress](#development-progress).
 
@@ -107,11 +111,12 @@ Reading measure is capped near 62 characters.
 
 Semantic names layered over the default 4px scale:
 
-| Token     | Value                        | Use                                 |
-| --------- | ---------------------------- | ----------------------------------- |
-| `gutter`  | 1.25rem                      | Gap between panels, and page margin |
-| `panel`   | 1.75rem                      | Panel inner padding                 |
-| `section` | `clamp(2.5rem, 6vw, 4.5rem)` | Vertical rhythm between sections    |
+| Token     | Value                        | Use                                                |
+| --------- | ---------------------------- | -------------------------------------------------- |
+| `gutter`  | 1.25rem                      | Gap between panels, and page margin                |
+| `panel`   | 1.75rem                      | Panel inner padding                                |
+| `section` | `clamp(2.5rem, 6vw, 4.5rem)` | Vertical rhythm between sections                   |
+| `header`  | 3.5rem                       | Sticky header height, and the anchor scroll offset |
 
 `gutter` doubles as the page margin so panels align with the page edge.
 
@@ -148,6 +153,27 @@ the page and deepens the shadow to 5px, and pressing pushes them flat into the
 shadow's place. The default transition is 120ms. `prefers-reduced-motion:
 reduce` collapses all transitions and animations.
 
+## Navigation
+
+The portfolio is a single page, so navigation is a set of in-page anchors
+rather than routes. `lib/nav.ts` declares the sections in page order and
+records whether each one exists yet:
+
+```ts
+{ id: "projects", label: "Projects", ready: false }
+```
+
+Only sections marked `ready` are rendered in the header, the mobile menu, and
+any call to action that targets them — the navigation therefore never contains
+a link that scrolls nowhere while the page is still being built. Building a
+section means adding it to the page and flipping its flag to `true`.
+
+Until the projects section exists, the hero's project call to action points at
+the GitHub repository list instead, so the control still works.
+
+Anchor targets clear the sticky header via `scroll-padding-top` on the scroll
+container, sized from the same `--spacing-header` token the header uses.
+
 ## Project Structure
 
 ```text
@@ -158,6 +184,11 @@ reduce` collapses all transitions and animations.
 │   ├── layout.tsx        # Root layout: fonts, metadata, page shell
 │   └── page.tsx          # Home page
 ├── components/
+│   ├── sections/         # Page sections, in page order
+│   │   └── Hero.tsx      # Name, role, and the primary calls to action
+│   ├── site/             # Page shell
+│   │   ├── MobileNav.tsx # Section disclosure below `md` (Client Component)
+│   │   └── SiteHeader.tsx# Sticky header
 │   └── ui/               # Design system primitives
 │       ├── Button.tsx    # Button and ButtonLink
 │       ├── Container.tsx # Page-width constraint
@@ -165,6 +196,7 @@ reduce` collapses all transitions and animations.
 │       └── Section.tsx   # Section rhythm and heading
 ├── lib/                  # Framework-agnostic helpers and shared data
 │   ├── cn.ts             # Class name joiner
+│   ├── nav.ts            # Section list and readiness flags
 │   └── site.ts           # Site name, description, GitHub identity
 ├── public/               # Static assets served from the site root
 ├── eslint.config.mjs     # ESLint flat config
@@ -175,8 +207,8 @@ reduce` collapses all transitions and animations.
 └── AGENTS.md             # Next.js-generated guidance for AI coding agents
 ```
 
-Section components (hero, about, projects, and so on) are added to
-`components/` in later phases as the sections that need them are built.
+Sections are added to `components/sections/` as they are built, one per
+development phase, and registered in `lib/nav.ts`.
 
 ## Getting Started
 
@@ -234,7 +266,7 @@ npm run start
 
 - [x] Phase 1 — Project setup
 - [x] Phase 2 — Design system
-- [ ] Phase 3 — Hero & navigation
+- [x] Phase 3 — Hero & navigation
 - [ ] Phase 4 — About section
 - [ ] Phase 5 — Skills section
 - [ ] Phase 6 — Projects section

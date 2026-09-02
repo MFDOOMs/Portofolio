@@ -8,4 +8,5 @@ export const site = {
   description: "Personal portfolio of Tristan Bonardo Silalahi.",
   githubUsername: "MFDOOMs",
   githubUrl: "https://github.com/MFDOOMs",
+  githubReposUrl: "https://github.com/MFDOOMs?tab=repositories",
 } as const;
