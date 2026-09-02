@@ -18,11 +18,18 @@ _Screenshots will be added once the interface sections are implemented._
 
 ## About
 
-Tristan Bonardo Silalahi is an Informatics Engineering student who currently
-serves as **Head of the Cadre Department at HIMATIF** (February 2026 – present).
+Tristan Bonardo Silalahi is a third-year Informatics Engineering student at
+**Universitas Padjadjaran**, concentrating in computer networks with artificial
+intelligence as his minor, and currently **Head of the Cadre Department at
+HIMATIF** (February 2026 – present). He is based in Sumedang, West Java,
+Indonesia.
 
-_This section is intentionally brief and will be expanded in Phase 4 with
-information provided by the site owner. No biographical details are invented._
+His hands-on work sits in machine learning and software development: building
+small tools end to end, and leading student teams that ship real programs on a
+deadline.
+
+Section content is sourced from his CV and his own description of his work. No
+biographical details are invented.
 
 ## Tech Stack
 
@@ -54,6 +61,7 @@ Implemented so far:
 - Mobile section menu as a keyboard-accessible disclosure below `md`
 - Skip-to-content link as the first focusable element on the page
 - Hero section introducing Tristan's identity, with GitHub and project CTAs
+- About section pairing a prose introduction with an at-a-glance detail panel
 
 Planned features are tracked in [Development Progress](#development-progress).
 
@@ -171,6 +179,10 @@ section means adding it to the page and flipping its flag to `true`.
 Until the projects section exists, the hero's project call to action points at
 the GitHub repository list instead, so the control still works.
 
+The section list hides below `md` with `max-md:hidden` — one utility stating
+the intent — rather than `hidden md:block`, which sets a default and then
+overrides it.
+
 Anchor targets clear the sticky header via `scroll-padding-top` on the scroll
 container, sized from the same `--spacing-header` token the header uses.
 
@@ -185,6 +197,7 @@ container, sized from the same `--spacing-header` token the header uses.
 │   └── page.tsx          # Home page
 ├── components/
 │   ├── sections/         # Page sections, in page order
+│   │   ├── About.tsx     # Prose introduction and the detail panel
 │   │   └── Hero.tsx      # Name, role, and the primary calls to action
 │   ├── site/             # Page shell
 │   │   ├── MobileNav.tsx # Section disclosure below `md` (Client Component)
@@ -195,6 +208,7 @@ container, sized from the same `--spacing-header` token the header uses.
 │       ├── Panel.tsx     # Comic panel
 │       └── Section.tsx   # Section rhythm and heading
 ├── lib/                  # Framework-agnostic helpers and shared data
+│   ├── about.ts          # About-section prose and reference details
 │   ├── cn.ts             # Class name joiner
 │   ├── nav.ts            # Section list and readiness flags
 │   └── site.ts           # Site name, description, GitHub identity
@@ -267,7 +281,7 @@ npm run start
 - [x] Phase 1 — Project setup
 - [x] Phase 2 — Design system
 - [x] Phase 3 — Hero & navigation
-- [ ] Phase 4 — About section
+- [x] Phase 4 — About section
 - [ ] Phase 5 — Skills section
 - [ ] Phase 6 — Projects section
 - [ ] Phase 7 — Leadership & experience

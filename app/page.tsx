@@ -1,3 +1,4 @@
+import { About } from "@/components/sections/About";
 import { Hero } from "@/components/sections/Hero";
 
 export default function Home() {
@@ -5,6 +6,7 @@ export default function Home() {
     // `tabIndex` lets the skip link move keyboard focus here, not just scroll.
     <main id="main" tabIndex={-1} className="flex-1">
       <Hero />
+      <About />
     </main>
   );
 }

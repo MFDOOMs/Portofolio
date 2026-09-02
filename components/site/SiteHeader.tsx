@@ -12,6 +12,10 @@ import { site } from "@/lib/site";
  * than a blur or shadow, so it reads as the top edge of the printed page.
  * Only the mobile disclosure needs client JavaScript; it is isolated in
  * `MobileNav` so the rest of the header stays a Server Component.
+ *
+ * The section list hides below `md` with `max-md:hidden` rather than
+ * `hidden md:block`: one utility that states the intent directly instead of
+ * setting a default and then overriding it.
  */
 export function SiteHeader() {
   return (
@@ -27,7 +31,7 @@ export function SiteHeader() {
 
           <div className="gap-gutter flex items-center">
             {readySections.length > 0 ? (
-              <nav aria-label="Sections" className="hidden md:block">
+              <nav aria-label="Sections" className="max-md:hidden">
                 <ul className="flex items-center gap-2">
                   {readySections.map((section) => (
                     <li key={section.id}>

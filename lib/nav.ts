@@ -16,7 +16,7 @@ export type NavSection = {
 
 /** Declared in the order the sections appear on the page. */
 export const navSections: readonly NavSection[] = [
-  { id: "about", label: "About", ready: false },
+  { id: "about", label: "About", ready: true },
   { id: "skills", label: "Skills", ready: false },
   { id: "projects", label: "Projects", ready: false },
   { id: "leadership", label: "Leadership", ready: false },
