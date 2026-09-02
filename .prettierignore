@@ -1,0 +1,9 @@
+node_modules
+.next
+out
+build
+package-lock.json
+*.ico
+
+# Author-owned specification document — do not reformat
+Development Workflow & Progress Tracking.md
