@@ -1,26 +1,142 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/*
+ * Design system — "villain tape"
+ *
+ * The page is treated as a printed comic page: true black ink on yellowed
+ * pulp stock, content divided into bordered panels separated by gutters,
+ * halftone dots as the only texture. Square corners and hard, unblurred
+ * shadows throughout; nothing is rounded, blurred, or gradient-filled.
+ */
+@theme {
+  /* --- Color -------------------------------------------------------------
+   * Named by role, not by hue, so the dark-mode override below flips the
+   * whole system by reassigning four variables.
+   */
+  --color-ink: #000000; /* text, borders, halftone dots */
+  --color-paper: #e9e0cc; /* page stock */
+  --color-plate: #f4eddb; /* raised panel fill */
+  --color-brass: #8a6a2c; /* accent — 3.8:1 on paper: large text and borders only */
+  --color-brass-deep: #6f5522; /* accent — 5.3:1 on paper: safe for body-size text */
+
+  /* --- Typography -------------------------------------------------------
+   * Two families, deliberately far apart: an ultra-condensed poster face for
+   * display, a neutral variable grotesk for everything a person reads.
+   */
+  --font-display:
+    var(--font-anton), "Arial Narrow", "Haettenschweiler", sans-serif;
+  --font-sans: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+
+  /* Modular scale, ratio ~1.25 through the body sizes, widening at display
+   * sizes where the jump should be felt. Display sizes are fluid. */
+  --text-xs: 0.8125rem;
+  --text-xs--line-height: 1.45;
+  --text-sm: 0.9375rem;
+  --text-sm--line-height: 1.5;
+  --text-base: 1.0625rem;
+  --text-base--line-height: 1.6;
+  --text-lg: 1.25rem;
+  --text-lg--line-height: 1.55;
+  --text-xl: 1.5625rem;
+  --text-xl--line-height: 1.3;
+  --text-2xl: 2rem;
+  --text-2xl--line-height: 1.15;
+  --text-3xl: 2.625rem;
+  --text-3xl--line-height: 1.02;
+  --text-4xl: clamp(2.75rem, 6vw, 4.25rem);
+  --text-4xl--line-height: 0.95;
+  --text-5xl: clamp(3.25rem, 11vw, 7.5rem);
+  --text-5xl--line-height: 0.86;
+
+  /* --- Spacing ----------------------------------------------------------
+   * Semantic names on top of the default 4px scale. `gutter` is the comic
+   * term for the space between panels and is the one rhythm value reused
+   * for page margins, so panels align with the page edge.
+   */
+  --spacing-gutter: 1.25rem;
+  --spacing-panel: 1.75rem;
+  --spacing-section: clamp(2.5rem, 6vw, 4.5rem);
+
+  /* --- Elevation --------------------------------------------------------
+   * Offset ink, zero blur — a printed drop shadow, not a soft UI one.
+   */
+  --shadow-hard-sm: 3px 3px 0 0 var(--color-ink);
+  --shadow-hard: 5px 5px 0 0 var(--color-ink);
+
+  /* --- Motion ----------------------------------------------------------- */
+  --default-transition-duration: 120ms;
+  --default-transition-timing-function: cubic-bezier(0.2, 0, 0.2, 1);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
+/* Dark mode: the plate is inked and the stock is pulled from it. Only the
+ * four role colors change; every utility built on them follows. */
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --color-ink: #ece3cf;
+    --color-paper: #12100e;
+    --color-plate: #1c1916;
+    --color-brass: #c79a4e;
+    --color-brass-deep: #d8ab5e;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+/* Halftone: the dot field of cheap four-color comic printing. Sized so the
+ * dots read as texture at arm's length rather than as a pattern. */
+@utility halftone {
+  background-image: radial-gradient(
+    color-mix(in oklab, var(--color-ink) 24%, transparent) 1.1px,
+    transparent 1.2px
+  );
+  background-size: 7px 7px;
+}
+
+/* Coarser field for large areas, where fine dots would shimmer. */
+@utility halftone-coarse {
+  background-image: radial-gradient(
+    color-mix(in oklab, var(--color-ink) 20%, transparent) 1.6px,
+    transparent 1.7px
+  );
+  background-size: 12px 12px;
+}
+
+:root {
+  color-scheme: light dark;
+}
+
+@layer base {
+  body {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+  }
+
+  /* Display type is set tight and slightly negative-tracked; Anton is drawn
+   * narrow enough that default tracking opens gaps at large sizes. */
+  .font-display {
+    letter-spacing: -0.015em;
+  }
+
+  ::selection {
+    background-color: var(--color-brass);
+    color: var(--color-paper);
+  }
+
+  /* Focus is a hard brass frame offset from the element, matching the
+   * printed-shadow logic rather than a soft glow. */
+  :focus-visible {
+    outline: 3px solid var(--color-brass);
+    outline-offset: 3px;
+  }
+}
+
+/* Motion answers a click; it is never decoration. Honour the OS setting. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

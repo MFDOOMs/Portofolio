@@ -32,7 +32,7 @@ information provided by the site owner. No biographical details are invented._
 | Language   | [TypeScript 5](https://www.typescriptlang.org) |
 | UI runtime | [React 19](https://react.dev)                  |
 | Styling    | [Tailwind CSS 4](https://tailwindcss.com)      |
-| Fonts      | Geist Sans & Geist Mono via `next/font`        |
+| Fonts      | Anton & Archivo via `next/font`                |
 | Linting    | ESLint 9 with `eslint-config-next`             |
 | Formatting | Prettier with `prettier-plugin-tailwindcss`    |
 | Hosting    | [Vercel](https://vercel.com) (planned)         |
@@ -43,11 +43,110 @@ Implemented so far:
 
 - Next.js App Router project with TypeScript in strict mode
 - Tailwind CSS 4 styling pipeline via PostCSS
-- Self-hosted Geist font loading through `next/font`
+- Self-hosted Anton and Archivo font loading through `next/font`
 - Centralized site identity values in `lib/site.ts`
 - ESLint and Prettier configured with npm scripts for both
+- Design system with role-based color tokens, a modular type scale, and
+  reusable UI primitives (see [Design System](#design-system))
+- Light and dark palettes driven by `prefers-color-scheme`
+- Reduced-motion support and a visible keyboard focus style
 
 Planned features are tracked in [Development Progress](#development-progress).
+
+## Design System
+
+The visual direction is a printed comic page: true black ink on yellowed pulp
+stock, content divided into bordered panels separated by gutters, halftone dots
+as the only texture. Square corners throughout, hard unblurred shadows, no
+gradients.
+
+All tokens are declared in the Tailwind `@theme` block in `app/globals.css`.
+
+### Color
+
+Tokens are named by role rather than hue, so dark mode reassigns five variables
+and every utility built on them follows.
+
+| Token        | Light     | Dark      | Use                                        |
+| ------------ | --------- | --------- | ------------------------------------------ |
+| `ink`        | `#000000` | `#ece3cf` | Text, borders, halftone dots               |
+| `paper`      | `#e9e0cc` | `#12100e` | Page stock                                 |
+| `plate`      | `#f4eddb` | `#1c1916` | Raised panel fill                          |
+| `brass`      | `#8a6a2c` | `#c79a4e` | Accents, borders, large text (3.8:1 light) |
+| `brass-deep` | `#6f5522` | `#d8ab5e` | Accents at body size (5.3:1 light)         |
+
+`brass` clears the 3:1 threshold for large text and UI borders but not the 4.5:1
+body-text threshold; use `brass-deep` for accent text at body size.
+
+### Typography
+
+Two families with deliberately different jobs:
+
+- **Anton** — ultra-condensed poster face, display sizes only, via the
+  `font-display` utility.
+- **Archivo** — variable grotesk, every line intended to be read.
+
+The scale is roughly a 1.25 ratio through body sizes and widens at display
+sizes, where display steps are fluid via `clamp()`.
+
+| Token       | Size                           | Use                  |
+| ----------- | ------------------------------ | -------------------- |
+| `text-xs`   | 0.8125rem                      | Fine print           |
+| `text-sm`   | 0.9375rem                      | Secondary labels     |
+| `text-base` | 1.0625rem                      | Body copy            |
+| `text-lg`   | 1.25rem                        | Emphasised body      |
+| `text-xl`   | 1.5625rem                      | Lead paragraphs      |
+| `text-2xl`  | 2rem                           | Panel headings       |
+| `text-3xl`  | 2.625rem                       | Section headings     |
+| `text-4xl`  | `clamp(2.75rem, 6vw, 4.25rem)` | Page-level statement |
+| `text-5xl`  | `clamp(3.25rem, 11vw, 7.5rem)` | Name, once per page  |
+
+Reading measure is capped near 62 characters.
+
+### Spacing
+
+Semantic names layered over the default 4px scale:
+
+| Token     | Value                        | Use                                 |
+| --------- | ---------------------------- | ----------------------------------- |
+| `gutter`  | 1.25rem                      | Gap between panels, and page margin |
+| `panel`   | 1.75rem                      | Panel inner padding                 |
+| `section` | `clamp(2.5rem, 6vw, 4.5rem)` | Vertical rhythm between sections    |
+
+`gutter` doubles as the page margin so panels align with the page edge.
+
+### Breakpoints
+
+Tailwind's defaults are kept, since they already line up with the widths the
+project targets:
+
+| Breakpoint | Min width      |
+| ---------- | -------------- |
+| _(base)_   | 375px and up   |
+| `sm`       | 40rem / 640px  |
+| `md`       | 48rem / 768px  |
+| `lg`       | 64rem / 1024px |
+| `xl`       | 80rem / 1280px |
+
+### Primitives
+
+| Component    | Purpose                                                         |
+| ------------ | --------------------------------------------------------------- |
+| `Container`  | Page-width constraint; padding matches the panel gutter         |
+| `Panel`      | Comic panel — `plate`, `paper`, or `ink` tone; optional padding |
+| `Section`    | Vertical rhythm plus the section heading and its rule           |
+| `Button`     | `<button>` in `solid`, `outline`, or `quiet` variant            |
+| `ButtonLink` | `<a>` styled as a control, for navigation and external links    |
+
+Two custom utilities, `halftone` and `halftone-coarse`, apply the dot field.
+
+### Animation
+
+Motion answers a person's action and is never decoration. Controls model a
+physical press: at rest they cast a 3px printed shadow, hover lifts them 2px off
+the page and deepens the shadow to 5px, and pressing pushes them flat into the
+shadow's place. The default transition is 120ms. `prefers-reduced-motion:
+reduce` collapses all transitions and animations.
 
 ## Project Structure
 
@@ -55,10 +154,17 @@ Planned features are tracked in [Development Progress](#development-progress).
 .
 ├── app/                  # Next.js App Router routes and layouts
 │   ├── favicon.ico
-│   ├── globals.css       # Tailwind entry point and CSS custom properties
+│   ├── globals.css       # Tailwind entry point, design tokens, base styles
 │   ├── layout.tsx        # Root layout: fonts, metadata, page shell
 │   └── page.tsx          # Home page
+├── components/
+│   └── ui/               # Design system primitives
+│       ├── Button.tsx    # Button and ButtonLink
+│       ├── Container.tsx # Page-width constraint
+│       ├── Panel.tsx     # Comic panel
+│       └── Section.tsx   # Section rhythm and heading
 ├── lib/                  # Framework-agnostic helpers and shared data
+│   ├── cn.ts             # Class name joiner
 │   └── site.ts           # Site name, description, GitHub identity
 ├── public/               # Static assets served from the site root
 ├── eslint.config.mjs     # ESLint flat config
@@ -69,8 +175,8 @@ Planned features are tracked in [Development Progress](#development-progress).
 └── AGENTS.md             # Next.js-generated guidance for AI coding agents
 ```
 
-Additional directories (`components/`, and any data modules) are introduced in
-later phases as the sections that need them are built.
+Section components (hero, about, projects, and so on) are added to
+`components/` in later phases as the sections that need them are built.
 
 ## Getting Started
 
@@ -127,7 +233,7 @@ npm run start
 ## Development Progress
 
 - [x] Phase 1 — Project setup
-- [ ] Phase 2 — Design system
+- [x] Phase 2 — Design system
 - [ ] Phase 3 — Hero & navigation
 - [ ] Phase 4 — About section
 - [ ] Phase 5 — Skills section
