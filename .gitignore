@@ -39,3 +39,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# CV / resume PDFs. Anything under public/ is served publicly once deployed,
+# and the CV carries a phone number and personal email. Kept local and used
+# only as a source for the site's content.
+/public/*.pdf
