@@ -41,6 +41,23 @@ GitHub repositories: LightGBM, DuckDB, pytest, and GitHub Actions from
 `Tugas-UAS-AI-kelompok-API` group project. Each entry's source is noted inline
 in `lib/skills.ts`.
 
+## Projects
+
+The projects section leads with one featured project at full width, then lists
+the rest in an unequal two-column grid. Every card is rendered by the same
+`ProjectCard` component from data in `lib/projects.ts`, so adding a project is a
+data change only.
+
+Project content comes from the READMEs of Tristan's public repositories, and
+every figure on a card appears in its linked repository. Team projects state
+his part, taken from the team section of the project's own README. Each card
+carries a category, its repository links, and a live demo link when one exists
+— none of the projects is deployed yet.
+
+Not shown yet: the face-spoof detection model from the Find IT competition,
+which has no public repository, and the `KelompokSorting` C++ coursework, which
+is left to the GitHub section.
+
 ## Tech Stack
 
 | Layer      | Technology                                     |
@@ -74,6 +91,8 @@ Implemented so far:
 - About section pairing a prose introduction with an at-a-glance detail panel
 - Skills section grouping technical skills by purpose, without proficiency
   ratings
+- Project showcase with a featured project, reusable cards, categories, stated
+  team roles, and repository links
 
 Planned features are tracked in [Development Progress](#development-progress).
 
@@ -162,6 +181,7 @@ project targets:
 | `Section`    | Vertical rhythm plus the section heading and its rule           |
 | `Button`     | `<button>` in `solid`, `outline`, or `quiet` variant            |
 | `ButtonLink` | `<a>` styled as a control, for navigation and external links    |
+| `TagList`    | Wrapping row of bordered labels, for skills and project tech    |
 
 Two custom utilities, `halftone` and `halftone-coarse`, apply the dot field.
 
@@ -180,7 +200,7 @@ rather than routes. `lib/nav.ts` declares the sections in page order and
 records whether each one exists yet:
 
 ```ts
-{ id: "projects", label: "Projects", ready: false }
+{ id: "leadership", label: "Leadership", ready: false }
 ```
 
 Only sections marked `ready` are rendered in the header, the mobile menu, and
@@ -188,8 +208,9 @@ any call to action that targets them — the navigation therefore never contains
 a link that scrolls nowhere while the page is still being built. Building a
 section means adding it to the page and flipping its flag to `true`.
 
-Until the projects section exists, the hero's project call to action points at
-the GitHub repository list instead, so the control still works.
+Calls to action follow the same rule. The hero's project button pointed at the
+GitHub repository list until the projects section existed, and now scrolls to
+it.
 
 The section list hides below `md` with `max-md:hidden` — one utility stating
 the intent — rather than `hidden md:block`, which sets a default and then
@@ -208,9 +229,12 @@ container, sized from the same `--spacing-header` token the header uses.
 │   ├── layout.tsx        # Root layout: fonts, metadata, page shell
 │   └── page.tsx          # Home page
 ├── components/
+│   ├── projects/         # Project showcase building blocks
+│   │   └── ProjectCard.tsx # One project: story, evidence, stack, links
 │   ├── sections/         # Page sections, in page order
 │   │   ├── About.tsx     # Prose introduction and the detail panel
 │   │   ├── Hero.tsx      # Name, role, and the primary calls to action
+│   │   ├── Projects.tsx  # Featured project, then the rest
 │   │   └── Skills.tsx    # Technical skills, grouped by purpose
 │   ├── site/             # Page shell
 │   │   ├── MobileNav.tsx # Section disclosure below `md` (Client Component)
@@ -219,11 +243,13 @@ container, sized from the same `--spacing-header` token the header uses.
 │       ├── Button.tsx    # Button and ButtonLink
 │       ├── Container.tsx # Page-width constraint
 │       ├── Panel.tsx     # Comic panel
-│       └── Section.tsx   # Section rhythm and heading
+│       ├── Section.tsx   # Section rhythm and heading
+│       └── TagList.tsx   # Row of bordered labels
 ├── lib/                  # Framework-agnostic helpers and shared data
 │   ├── about.ts          # About-section prose and reference details
 │   ├── cn.ts             # Class name joiner
 │   ├── nav.ts            # Section list and readiness flags
+│   ├── projects.ts       # Project content, each figure from its repository
 │   ├── site.ts           # Site name, description, GitHub identity
 │   └── skills.ts         # Skill groups, each entry with its source
 ├── public/               # Static assets served from the site root
@@ -297,7 +323,7 @@ npm run start
 - [x] Phase 3 — Hero & navigation
 - [x] Phase 4 — About section
 - [x] Phase 5 — Skills section
-- [ ] Phase 6 — Projects section
+- [x] Phase 6 — Projects section
 - [ ] Phase 7 — Leadership & experience
 - [ ] Phase 8 — GitHub integration
 - [ ] Phase 9 — Contact section
