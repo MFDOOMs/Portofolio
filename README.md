@@ -31,6 +31,16 @@ deadline.
 Section content is sourced from his CV and his own description of his work. No
 biographical details are invented.
 
+## Skills
+
+The skills section groups technical skills by what they are for — languages,
+machine learning and data, tools, and foundations — with no proficiency bars or
+ratings. Entries come from Tristan's CV, plus a few verified from his public
+GitHub repositories: LightGBM, DuckDB, pytest, and GitHub Actions from
+`KarhutlaGemastik2026`, and HTML and CSS from his frontend role on the
+`Tugas-UAS-AI-kelompok-API` group project. Each entry's source is noted inline
+in `lib/skills.ts`.
+
 ## Tech Stack
 
 | Layer      | Technology                                     |
@@ -62,6 +72,8 @@ Implemented so far:
 - Skip-to-content link as the first focusable element on the page
 - Hero section introducing Tristan's identity, with GitHub and project CTAs
 - About section pairing a prose introduction with an at-a-glance detail panel
+- Skills section grouping technical skills by purpose, without proficiency
+  ratings
 
 Planned features are tracked in [Development Progress](#development-progress).
 
@@ -198,7 +210,8 @@ container, sized from the same `--spacing-header` token the header uses.
 ├── components/
 │   ├── sections/         # Page sections, in page order
 │   │   ├── About.tsx     # Prose introduction and the detail panel
-│   │   └── Hero.tsx      # Name, role, and the primary calls to action
+│   │   ├── Hero.tsx      # Name, role, and the primary calls to action
+│   │   └── Skills.tsx    # Technical skills, grouped by purpose
 │   ├── site/             # Page shell
 │   │   ├── MobileNav.tsx # Section disclosure below `md` (Client Component)
 │   │   └── SiteHeader.tsx# Sticky header
@@ -211,7 +224,8 @@ container, sized from the same `--spacing-header` token the header uses.
 │   ├── about.ts          # About-section prose and reference details
 │   ├── cn.ts             # Class name joiner
 │   ├── nav.ts            # Section list and readiness flags
-│   └── site.ts           # Site name, description, GitHub identity
+│   ├── site.ts           # Site name, description, GitHub identity
+│   └── skills.ts         # Skill groups, each entry with its source
 ├── public/               # Static assets served from the site root
 ├── eslint.config.mjs     # ESLint flat config
 ├── next.config.ts        # Next.js configuration
@@ -282,7 +296,7 @@ npm run start
 - [x] Phase 2 — Design system
 - [x] Phase 3 — Hero & navigation
 - [x] Phase 4 — About section
-- [ ] Phase 5 — Skills section
+- [x] Phase 5 — Skills section
 - [ ] Phase 6 — Projects section
 - [ ] Phase 7 — Leadership & experience
 - [ ] Phase 8 — GitHub integration
