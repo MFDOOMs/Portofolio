@@ -70,6 +70,33 @@ the original project specification differ, the CV is used: the department has
 six people including Tristan, the orientation program is the Character Building
 Season (CBS), and no attendance figure is claimed, since none is documented.
 
+## GitHub
+
+The GitHub section lists every public, non-fork repository on
+`github.com/MFDOOMs`, read from the GitHub REST API, beside a panel with the
+account's age, its most-used languages, and a profile link. Star and follower
+counts are left out on purpose.
+
+The request runs in a Server Component, never in the browser. Responses are
+cached for an hour: the page is prerendered with them and rebuilt in the
+background at most once an hour, so visitors never wait on GitHub and traffic
+never spends its rate limit. Only public repositories are requested, and only
+the fields the page shows are kept.
+
+Every state is handled:
+
+- **Loading** — there is no loading moment for a visitor to see. The data is
+  fetched while the page is prerendered, and during the hourly refresh
+  visitors keep getting the previous page until the new one is ready. A
+  `<Suspense>` placeholder was tried and removed: in a prerendered page it
+  ships the placeholder in place and moves the real list behind a script, so
+  anything that doesn't run JavaScript would see only the placeholder.
+- **Failure** — a GitHub outage, rate limit, or malformed response renders a
+  short notice with a link to the profile instead of breaking the page, and the
+  reason is logged on the server.
+- **Empty** — an account with no public repositories gets a notice rather than
+  an empty grid.
+
 ## Tech Stack
 
 | Layer      | Technology                                     |
@@ -107,6 +134,8 @@ Implemented so far:
   team roles, and repository links
 - Leadership section tracing Tristan's HIMATIF roles, with the shared context
   and soft skills in a side panel
+- GitHub section listing public repositories from the GitHub API, fetched on
+  the server with hourly revalidation and loading, failure, and empty states
 
 Planned features are tracked in [Development Progress](#development-progress).
 
@@ -214,7 +243,7 @@ rather than routes. `lib/nav.ts` declares the sections in page order and
 records whether each one exists yet:
 
 ```ts
-{ id: "github", label: "GitHub", ready: false }
+{ id: "contact", label: "Contact", ready: false }
 ```
 
 Only sections marked `ready` are rendered in the header, the mobile menu, and
@@ -247,6 +276,7 @@ container, sized from the same `--spacing-header` token the header uses.
 │   │   └── ProjectCard.tsx # One project: story, evidence, stack, links
 │   ├── sections/         # Page sections, in page order
 │   │   ├── About.tsx     # Prose introduction and the detail panel
+│   │   ├── GitHub.tsx    # Public repositories from the GitHub API
 │   │   ├── Hero.tsx      # Name, role, and the primary calls to action
 │   │   ├── Leadership.tsx # HIMATIF roles and the context they share
 │   │   ├── Projects.tsx  # Featured project, then the rest
@@ -263,6 +293,7 @@ container, sized from the same `--spacing-header` token the header uses.
 ├── lib/                  # Framework-agnostic helpers and shared data
 │   ├── about.ts          # About-section prose and reference details
 │   ├── cn.ts             # Class name joiner
+│   ├── github.ts         # Server-side GitHub API client, cached hourly
 │   ├── leadership.ts     # Roles, organization context, and soft skills
 │   ├── nav.ts            # Section list and readiness flags
 │   ├── projects.ts       # Project content, each figure from its repository
@@ -306,11 +337,18 @@ The development server runs at [http://localhost:3000](http://localhost:3000).
 
 ## Environment Variables
 
-The project currently requires **no environment variables**.
+The site builds and runs with **no environment variables**. One is optional:
 
-If any are introduced in a later phase, they will be documented here by name and
-purpose only. Real secrets and API keys are never committed to this repository
-or written into this README; `.env*` files are excluded via `.gitignore`.
+| Variable       | Required | Purpose                                                                                                                                          |
+| -------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `GITHUB_TOKEN` | No       | Authenticates the GitHub section's API requests, raising GitHub's rate limit from 60 to 5,000 requests an hour. Useful on shared build machines. |
+
+Only public data is read, so a fine-grained token with read-only access to
+public repositories is enough. The variable has no `NEXT_PUBLIC_` prefix, so
+Next.js keeps it on the server and never bundles it into browser JavaScript.
+
+Real secrets and API keys are never committed to this repository or written into
+this README; `.env*` files are excluded via `.gitignore`.
 
 ## Deployment
 
@@ -321,8 +359,8 @@ configuration:
 2. Import the repository in the Vercel dashboard.
 3. Vercel detects Next.js automatically — the default build command
    (`next build`) and output settings apply.
-4. Add any environment variables in the Vercel project settings (none are
-   required today).
+4. Optionally add `GITHUB_TOKEN` in the Vercel project settings (see
+   [Environment Variables](#environment-variables)); nothing is required.
 5. Deploy. Subsequent pushes to the default branch trigger new deployments.
 
 A production build can be verified locally first:
@@ -341,7 +379,7 @@ npm run start
 - [x] Phase 5 — Skills section
 - [x] Phase 6 — Projects section
 - [x] Phase 7 — Leadership & experience
-- [ ] Phase 8 — GitHub integration
+- [x] Phase 8 — GitHub integration
 - [ ] Phase 9 — Contact section
 - [ ] Phase 10 — Responsive & accessibility
 - [ ] Phase 11 — SEO & performance
