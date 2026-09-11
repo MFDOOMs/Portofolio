@@ -19,7 +19,7 @@ export const navSections: readonly NavSection[] = [
   { id: "about", label: "About", ready: true },
   { id: "skills", label: "Skills", ready: true },
   { id: "projects", label: "Projects", ready: true },
-  { id: "leadership", label: "Leadership", ready: false },
+  { id: "leadership", label: "Leadership", ready: true },
   { id: "github", label: "GitHub", ready: false },
   { id: "contact", label: "Contact", ready: false },
 ];

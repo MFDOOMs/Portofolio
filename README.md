@@ -58,6 +58,18 @@ Not shown yet: the face-spoof detection model from the Find IT competition,
 which has no public repository, and the `KelompokSorting` C++ coursework, which
 is left to the GitHub section.
 
+## Leadership
+
+The leadership section lists Tristan's roles at HIMATIF, the Informatics
+Engineering Student Association at Universitas Padjadjaran, newest first, with
+the current role at full width. A side panel gives the organization, the
+orientation program the roles center on, and the soft skills listed on his CV.
+
+Content comes from his CV, and role bullets keep its wording. Where the CV and
+the original project specification differ, the CV is used: the department has
+six people including Tristan, the orientation program is the Character Building
+Season (CBS), and no attendance figure is claimed, since none is documented.
+
 ## Tech Stack
 
 | Layer      | Technology                                     |
@@ -93,6 +105,8 @@ Implemented so far:
   ratings
 - Project showcase with a featured project, reusable cards, categories, stated
   team roles, and repository links
+- Leadership section tracing Tristan's HIMATIF roles, with the shared context
+  and soft skills in a side panel
 
 Planned features are tracked in [Development Progress](#development-progress).
 
@@ -200,7 +214,7 @@ rather than routes. `lib/nav.ts` declares the sections in page order and
 records whether each one exists yet:
 
 ```ts
-{ id: "leadership", label: "Leadership", ready: false }
+{ id: "github", label: "GitHub", ready: false }
 ```
 
 Only sections marked `ready` are rendered in the header, the mobile menu, and
@@ -234,6 +248,7 @@ container, sized from the same `--spacing-header` token the header uses.
 │   ├── sections/         # Page sections, in page order
 │   │   ├── About.tsx     # Prose introduction and the detail panel
 │   │   ├── Hero.tsx      # Name, role, and the primary calls to action
+│   │   ├── Leadership.tsx # HIMATIF roles and the context they share
 │   │   ├── Projects.tsx  # Featured project, then the rest
 │   │   └── Skills.tsx    # Technical skills, grouped by purpose
 │   ├── site/             # Page shell
@@ -248,6 +263,7 @@ container, sized from the same `--spacing-header` token the header uses.
 ├── lib/                  # Framework-agnostic helpers and shared data
 │   ├── about.ts          # About-section prose and reference details
 │   ├── cn.ts             # Class name joiner
+│   ├── leadership.ts     # Roles, organization context, and soft skills
 │   ├── nav.ts            # Section list and readiness flags
 │   ├── projects.ts       # Project content, each figure from its repository
 │   ├── site.ts           # Site name, description, GitHub identity
@@ -324,7 +340,7 @@ npm run start
 - [x] Phase 4 — About section
 - [x] Phase 5 — Skills section
 - [x] Phase 6 — Projects section
-- [ ] Phase 7 — Leadership & experience
+- [x] Phase 7 — Leadership & experience
 - [ ] Phase 8 — GitHub integration
 - [ ] Phase 9 — Contact section
 - [ ] Phase 10 — Responsive & accessibility
