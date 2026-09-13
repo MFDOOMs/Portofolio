@@ -21,7 +21,7 @@ export const navSections: readonly NavSection[] = [
   { id: "projects", label: "Projects", ready: true },
   { id: "leadership", label: "Leadership", ready: true },
   { id: "github", label: "GitHub", ready: true },
-  { id: "contact", label: "Contact", ready: false },
+  { id: "contact", label: "Contact", ready: true },
 ];
 
 /** The only sections that may be linked to. */

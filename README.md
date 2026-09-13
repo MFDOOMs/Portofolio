@@ -97,6 +97,20 @@ Every state is handled:
 - **Empty** — an account with no public repositories gets a notice rather than
   an empty grid.
 
+## Contact
+
+The contact section closes the page with Tristan's email address at display
+size, a button to send an email and one to copy the address, and a side panel
+with his LinkedIn and GitHub profiles, location, and time zone.
+
+Only channels he has provided are listed, and he chose to show his email
+address publicly. The phone number on his CV is deliberately left off the page.
+Contact details live in `lib/site.ts` beside the rest of the site's identity.
+
+Copying uses the Clipboard API in a small Client Component. The result is
+announced to screen readers, and if the browser refuses, the button says so
+while the address stays selectable on the page.
+
 ## Tech Stack
 
 | Layer      | Technology                                     |
@@ -136,6 +150,8 @@ Implemented so far:
   and soft skills in a side panel
 - GitHub section listing public repositories from the GitHub API, fetched on
   the server with hourly revalidation and loading, failure, and empty states
+- Contact section with the email address, send and copy actions, and links to
+  LinkedIn and GitHub
 
 Planned features are tracked in [Development Progress](#development-progress).
 
@@ -225,6 +241,7 @@ project targets:
 | `Button`     | `<button>` in `solid`, `outline`, or `quiet` variant            |
 | `ButtonLink` | `<a>` styled as a control, for navigation and external links    |
 | `TagList`    | Wrapping row of bordered labels, for skills and project tech    |
+| `CopyButton` | Copies a value to the clipboard and announces whether it worked |
 
 Two custom utilities, `halftone` and `halftone-coarse`, apply the dot field.
 
@@ -243,13 +260,14 @@ rather than routes. `lib/nav.ts` declares the sections in page order and
 records whether each one exists yet:
 
 ```ts
-{ id: "contact", label: "Contact", ready: false }
+{ id: "contact", label: "Contact", ready: true }
 ```
 
 Only sections marked `ready` are rendered in the header, the mobile menu, and
 any call to action that targets them — the navigation therefore never contains
 a link that scrolls nowhere while the page is still being built. Building a
-section means adding it to the page and flipping its flag to `true`.
+section means adding it to the page and flipping its flag to `true`. All six
+sections are now built, so every flag is `true`.
 
 Calls to action follow the same rule. The hero's project button pointed at the
 GitHub repository list until the projects section existed, and now scrolls to
@@ -276,6 +294,7 @@ container, sized from the same `--spacing-header` token the header uses.
 │   │   └── ProjectCard.tsx # One project: story, evidence, stack, links
 │   ├── sections/         # Page sections, in page order
 │   │   ├── About.tsx     # Prose introduction and the detail panel
+│   │   ├── Contact.tsx   # Email, send and copy actions, other channels
 │   │   ├── GitHub.tsx    # Public repositories from the GitHub API
 │   │   ├── Hero.tsx      # Name, role, and the primary calls to action
 │   │   ├── Leadership.tsx # HIMATIF roles and the context they share
@@ -287,6 +306,7 @@ container, sized from the same `--spacing-header` token the header uses.
 │   └── ui/               # Design system primitives
 │       ├── Button.tsx    # Button and ButtonLink
 │       ├── Container.tsx # Page-width constraint
+│       ├── CopyButton.tsx # Copy to clipboard with an announced result (Client Component)
 │       ├── Panel.tsx     # Comic panel
 │       ├── Section.tsx   # Section rhythm and heading
 │       └── TagList.tsx   # Row of bordered labels
@@ -297,7 +317,7 @@ container, sized from the same `--spacing-header` token the header uses.
 │   ├── leadership.ts     # Roles, organization context, and soft skills
 │   ├── nav.ts            # Section list and readiness flags
 │   ├── projects.ts       # Project content, each figure from its repository
-│   ├── site.ts           # Site name, description, GitHub identity
+│   ├── site.ts           # Site identity: name, GitHub, email, LinkedIn, location
 │   └── skills.ts         # Skill groups, each entry with its source
 ├── public/               # Static assets served from the site root
 ├── eslint.config.mjs     # ESLint flat config
@@ -380,7 +400,7 @@ npm run start
 - [x] Phase 6 — Projects section
 - [x] Phase 7 — Leadership & experience
 - [x] Phase 8 — GitHub integration
-- [ ] Phase 9 — Contact section
+- [x] Phase 9 — Contact section
 - [ ] Phase 10 — Responsive & accessibility
 - [ ] Phase 11 — SEO & performance
 - [ ] Phase 12 — Final testing

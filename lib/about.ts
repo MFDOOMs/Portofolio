@@ -1,3 +1,5 @@
+import { site } from "@/lib/site";
+
 /**
  * About-section content, taken from Tristan's CV and his own description of
  * his work. Kept as data so the section component stays presentational, and
@@ -18,7 +20,7 @@ export const about = {
     { label: "Expected", value: "2028" },
     { label: "Concentration", value: "Computer networks" },
     { label: "Minor", value: "Artificial intelligence" },
-    { label: "Based in", value: "Sumedang, West Java, Indonesia" },
+    { label: "Based in", value: site.location },
     {
       label: "Languages",
       value: "Indonesian (native), English (professional working)",

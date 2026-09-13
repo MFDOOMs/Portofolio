@@ -1,4 +1,5 @@
 import { About } from "@/components/sections/About";
+import { Contact } from "@/components/sections/Contact";
 import { GitHub } from "@/components/sections/GitHub";
 import { Hero } from "@/components/sections/Hero";
 import { Leadership } from "@/components/sections/Leadership";
@@ -15,6 +16,7 @@ export default function Home() {
       <Projects />
       <Leadership />
       <GitHub />
+      <Contact />
     </main>
   );
 }

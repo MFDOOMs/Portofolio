@@ -9,4 +9,8 @@ export const site = {
   githubUsername: "MFDOOMs",
   githubUrl: "https://github.com/MFDOOMs",
   githubReposUrl: "https://github.com/MFDOOMs?tab=repositories",
+  /** Public by Tristan's choice; the phone number on his CV is not. */
+  email: "tristansilalahi09@gmail.com",
+  linkedinUrl: "https://www.linkedin.com/in/tristan-silalahi-785669270/",
+  location: "Sumedang, West Java, Indonesia",
 } as const;
