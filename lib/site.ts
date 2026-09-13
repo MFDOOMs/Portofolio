@@ -4,8 +4,11 @@
  */
 export const site = {
   name: "Tristan Bonardo Silalahi",
-  title: "Tristan Bonardo Silalahi — Portfolio",
-  description: "Personal portfolio of Tristan Bonardo Silalahi.",
+  /** Under 60 characters, so search results show it whole. */
+  title: "Tristan Bonardo Silalahi — Informatics Engineering Student",
+  /** Under 160 characters, the length search results display. */
+  description:
+    "Portfolio of Tristan Bonardo Silalahi, an Informatics Engineering student at Universitas Padjadjaran working in machine learning and software development.",
   githubUsername: "MFDOOMs",
   githubUrl: "https://github.com/MFDOOMs",
   githubReposUrl: "https://github.com/MFDOOMs?tab=repositories",

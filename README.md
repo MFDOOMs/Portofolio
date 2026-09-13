@@ -148,6 +148,48 @@ Automated contrast checking can't measure the hero, whose halftone dots sit
 behind the text; that text is ink on page stock, far above 4.5:1 in both
 schemes. The site has no images.
 
+## SEO & Performance
+
+**Metadata.** The root layout sets the title (58 characters) and description
+(154), a canonical link, Open Graph `profile` tags, and a large-image Twitter
+card; Next.js fills the Twitter title, description, and image in from the Open
+Graph fields. `metadataBase` comes from `lib/site-url.ts` — `SITE_URL` when set,
+otherwise Vercel's production domain, otherwise localhost — so no domain is
+hard-coded before the site is deployed. The viewport sets `theme-color` for each
+color scheme, and telephone detection is off so iOS doesn't turn figures like
+"14,838" into phone links.
+
+**Generated files**, all prerendered at build:
+
+- `opengraph-image.tsx` — a 1200×630 link preview drawn as a comic panel, set in
+  Anton and Archivo fetched from Google Fonts at build time. If that fetch
+  fails, the image falls back to a built-in font instead of failing the build.
+- `icon.svg` — a "T" monogram that inverts in dark mode, replacing the stock
+  create-next-app favicon. `apple-icon.tsx` draws the same mark at 180px.
+- `robots.ts` and `sitemap.ts` — the whole site is crawlable, and the sitemap
+  lists its one page.
+- Schema.org `Person` JSON-LD in the page, repeating only facts already shown,
+  with `<` escaped as the Next.js JSON-LD guide recommends.
+
+**Headings** were already correct: one `h1` and no skipped levels. **Images:**
+the page uses none; the only raster images are the generated preview and
+touch icon.
+
+**Performance.** The page is prerendered and refreshed at most hourly, fonts are
+self-hosted through `next/font` and preloaded, and only the mobile menu and the
+copy button ship client-side JavaScript. Lighthouse scores it 97 for
+performance on mobile and 100 on desktop, and 100 for accessibility, best
+practices, and SEO on both.
+
+Measured against the Phase 10 build over alternating runs, the new metadata
+adds about 1.3 KB of compressed HTML (14.0 → 15.4 KB with `next start`'s gzip).
+That crosses the first TCP congestion window, which Lighthouse's simulated
+slow-4G mobile run shows as roughly 150 ms more to first paint. Under applied
+throttling the difference was within run-to-run noise, and Vercel serves Brotli,
+which compresses smaller than gzip. The remaining Lighthouse suggestions, about
+55 KB of unused and 13 KB of legacy JavaScript, are in the Next.js and React
+runtime chunks rather than this project's code.
+
 ## Tech Stack
 
 | Layer      | Technology                                     |
@@ -189,6 +231,10 @@ Implemented so far:
   the server with hourly revalidation and loading, failure, and empty states
 - Contact section with the email address, send and copy actions, and links to
   LinkedIn and GitHub
+- Search and sharing metadata: title, description, canonical link, Open Graph
+  and Twitter tags, a generated link-preview image, and theme colors
+- Custom favicon and Apple touch icon, `robots.txt`, `sitemap.xml`, and
+  schema.org Person structured data
 
 Planned features are tracked in [Development Progress](#development-progress).
 
@@ -323,10 +369,14 @@ container, sized from the same `--spacing-header` token the header uses.
 ```text
 .
 ├── app/                  # Next.js App Router routes and layouts
-│   ├── favicon.ico
+│   ├── apple-icon.tsx    # 180px home-screen icon, generated at build
 │   ├── globals.css       # Tailwind entry point, design tokens, base styles
-│   ├── layout.tsx        # Root layout: fonts, metadata, page shell
-│   └── page.tsx          # Home page
+│   ├── icon.svg          # Favicon: "T" monogram with a dark-mode variant
+│   ├── layout.tsx        # Root layout: fonts, metadata, viewport, page shell
+│   ├── opengraph-image.tsx # Link-preview image, generated at build
+│   ├── page.tsx          # Home page and its structured data
+│   ├── robots.ts         # robots.txt, pointing at the sitemap
+│   └── sitemap.ts        # sitemap.xml for the single page
 ├── components/
 │   ├── projects/         # Project showcase building blocks
 │   │   └── ProjectCard.tsx # One project: story, evidence, stack, links
@@ -352,10 +402,12 @@ container, sized from the same `--spacing-header` token the header uses.
 │   ├── about.ts          # About-section prose and reference details
 │   ├── cn.ts             # Class name joiner
 │   ├── github.ts         # Server-side GitHub API client, cached hourly
+│   ├── google-font.ts    # TrueType Google Fonts for generated images
 │   ├── leadership.ts     # Roles, organization context, and soft skills
 │   ├── nav.ts            # Section list and readiness flags
 │   ├── projects.ts       # Project content, each figure from its repository
 │   ├── site.ts           # Site identity: name, GitHub, email, LinkedIn, location
+│   ├── site-url.ts       # Absolute site origin, from SITE_URL or Vercel
 │   └── skills.ts         # Skill groups, each entry with its source
 ├── public/               # Static assets served from the site root
 ├── eslint.config.mjs     # ESLint flat config
@@ -397,9 +449,10 @@ The development server runs at [http://localhost:3000](http://localhost:3000).
 
 The site builds and runs with **no environment variables**. One is optional:
 
-| Variable       | Required | Purpose                                                                                                                                          |
-| -------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `GITHUB_TOKEN` | No       | Authenticates the GitHub section's API requests, raising GitHub's rate limit from 60 to 5,000 requests an hour. Useful on shared build machines. |
+| Variable       | Required | Purpose                                                                                                                                                                                                                                                                   |
+| -------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `GITHUB_TOKEN` | No       | Authenticates the GitHub section's API requests, raising GitHub's rate limit from 60 to 5,000 requests an hour. Useful on shared build machines.                                                                                                                          |
+| `SITE_URL`     | No       | The site's absolute origin, e.g. `https://example.com`, used for the canonical link, Open Graph image, sitemap, and robots file. Defaults to Vercel's production domain on Vercel builds and to `http://localhost:3000` locally; set it once a custom domain is attached. |
 
 Only public data is read, so a fine-grained token with read-only access to
 public repositories is enough. The variable has no `NEXT_PUBLIC_` prefix, so
@@ -417,7 +470,8 @@ configuration:
 2. Import the repository in the Vercel dashboard.
 3. Vercel detects Next.js automatically — the default build command
    (`next build`) and output settings apply.
-4. Optionally add `GITHUB_TOKEN` in the Vercel project settings (see
+4. Optionally add `GITHUB_TOKEN`, and `SITE_URL` once a custom domain is
+   attached, in the Vercel project settings (see
    [Environment Variables](#environment-variables)); nothing is required.
 5. Deploy. Subsequent pushes to the default branch trigger new deployments.
 
@@ -440,6 +494,6 @@ npm run start
 - [x] Phase 8 — GitHub integration
 - [x] Phase 9 — Contact section
 - [x] Phase 10 — Responsive & accessibility
-- [ ] Phase 11 — SEO & performance
+- [x] Phase 11 — SEO & performance
 - [ ] Phase 12 — Final testing
 - [ ] Phase 13 — Vercel deployment
