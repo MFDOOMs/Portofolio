@@ -14,7 +14,15 @@ and organizations, and that is kept accurate rather than exhaustive.
 
 ### Preview
 
-_Screenshots will be added once the interface sections are implemented._
+![The home page on desktop in light mode: the sticky header, the "Informatics Engineering student" label, Tristan's name at poster size over halftone dots, and the GitHub and projects buttons](docs/screenshots/desktop-light.png)
+
+| Projects, light mode                                                                                                                                                          | Leadership, dark mode                                                                                                                                         |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ![The featured KarhutlaGuard project card, with its summary, highlights, the inked "What it can't do" panel, tech tags, and GitHub link](docs/screenshots/projects-light.png) | ![The leadership section in dark mode: the current Head of Cadre Department role beside the "At HIMATIF" context panel](docs/screenshots/leadership-dark.png) |
+
+<img src="docs/screenshots/mobile-light.png" alt="The home page on a 390px-wide phone: the name on one line beside the Menu button, above the hero" width="300" />
+
+Screenshots are captured from the production build.
 
 ## About
 
@@ -254,11 +262,9 @@ content.
 | Fonts      | Anton & Archivo via `next/font`                |
 | Linting    | ESLint 9 with `eslint-config-next`             |
 | Formatting | Prettier with `prettier-plugin-tailwindcss`    |
-| Hosting    | [Vercel](https://vercel.com) (planned)         |
+| Hosting    | [Vercel](https://vercel.com)                   |
 
 ## Features
-
-Implemented so far:
 
 - Next.js App Router project with TypeScript in strict mode
 - Tailwind CSS 4 styling pipeline via PostCSS
@@ -290,7 +296,8 @@ Implemented so far:
   schema.org Person structured data
 - Styled 404 page inside the site layout, with navigation that still works
 
-Planned features are tracked in [Development Progress](#development-progress).
+The order they were built in is recorded in
+[Development Progress](#development-progress).
 
 ## Design System
 
@@ -439,8 +446,8 @@ container, sized from the same `--spacing-header` token the header uses.
 │   │   ├── Projects.tsx  # Featured project, then the rest
 │   │   └── Skills.tsx    # Technical skills, grouped by purpose
 │   ├── site/             # Page shell
-│   │   ├── MobileNav.tsx # Section disclosure below `md` (Client Component)
-│   │   └── SiteHeader.tsx# Sticky header
+│   │   ├── MobileNav.tsx # Section menu below `lg` (Client Component)
+│   │   └── SiteHeader.tsx # Sticky header: name, section links, GitHub button
 │   └── ui/               # Design system primitives
 │       ├── Button.tsx    # Button and ButtonLink
 │       ├── Container.tsx # Page-width constraint
@@ -448,6 +455,8 @@ container, sized from the same `--spacing-header` token the header uses.
 │       ├── Panel.tsx     # Comic panel
 │       ├── Section.tsx   # Section rhythm and heading
 │       └── TagList.tsx   # Row of bordered labels
+├── docs/
+│   └── screenshots/      # README preview images, from the production build
 ├── lib/                  # Framework-agnostic helpers and shared data
 │   ├── about.ts          # About-section prose and reference details
 │   ├── cn.ts             # Class name joiner
@@ -460,21 +469,23 @@ container, sized from the same `--spacing-header` token the header uses.
 │   ├── site.ts           # Site identity: name, GitHub, email, LinkedIn, location
 │   ├── site-url.ts       # Absolute site origin, from SITE_URL or Vercel
 │   └── skills.ts         # Skill groups, each entry with its source
-├── public/               # Static assets served from the site root
 ├── eslint.config.mjs     # ESLint flat config
 ├── next.config.ts        # Next.js configuration
 ├── postcss.config.mjs    # PostCSS pipeline (Tailwind CSS)
 ├── tsconfig.json         # TypeScript configuration, `@/*` path alias
 ├── .prettierrc.json      # Prettier configuration
-└── AGENTS.md             # Next.js-generated guidance for AI coding agents
+├── AGENTS.md             # Next.js-generated guidance for AI coding agents
+├── CLAUDE.md             # Points Claude Code at AGENTS.md
+└── Development Workflow & Progress Tracking.md # The 13-phase build plan
 ```
 
-Sections are added to `components/sections/` as they are built, one per
-development phase, and registered in `lib/nav.ts`.
+Each page section lives in `components/sections/`, and its anchor is listed in
+`lib/nav.ts`. There is no `public/` folder in the repository: the icons and the
+link-preview image are generated from files in `app/`.
 
 ## Getting Started
 
-Requires Node.js 20 or later.
+Requires Node.js 20.9 or later, the minimum for Next.js 16.
 
 ```bash
 npm install
@@ -498,33 +509,57 @@ The development server runs at [http://localhost:3000](http://localhost:3000).
 
 ## Environment Variables
 
-The site builds and runs with **no environment variables**. One is optional:
+The site builds and runs with **no environment variables**; both below are
+optional.
 
 | Variable       | Required | Purpose                                                                                                                                                                                                                                                                   |
 | -------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `GITHUB_TOKEN` | No       | Authenticates the GitHub section's API requests, raising GitHub's rate limit from 60 to 5,000 requests an hour. Useful on shared build machines.                                                                                                                          |
+| `GITHUB_TOKEN` | No       | Authenticates the GitHub section's API requests, raising GitHub's rate limit from 60 to 5,000 requests an hour. Recommended on Vercel, whose build machines share IP addresses.                                                                                           |
 | `SITE_URL`     | No       | The site's absolute origin, e.g. `https://example.com`, used for the canonical link, Open Graph image, sitemap, and robots file. Defaults to Vercel's production domain on Vercel builds and to `http://localhost:3000` locally; set it once a custom domain is attached. |
 
 Only public data is read, so a fine-grained token with read-only access to
-public repositories is enough. The variable has no `NEXT_PUBLIC_` prefix, so
-Next.js keeps it on the server and never bundles it into browser JavaScript.
+public repositories is enough. Neither variable has a `NEXT_PUBLIC_` prefix, so
+Next.js keeps both on the server and never bundles them into browser
+JavaScript.
+
+`lib/site-url.ts` also reads `VERCEL_PROJECT_PRODUCTION_URL`, which Vercel sets
+on every build by itself; it is never added by hand.
 
 Real secrets and API keys are never committed to this repository or written into
 this README; `.env*` files are excluded via `.gitignore`.
 
 ## Deployment
 
-The project is designed to deploy to [Vercel](https://vercel.com) with no custom
-configuration:
+The project deploys to [Vercel](https://vercel.com) without a configuration
+file: Vercel detects Next.js and uses its default build.
 
-1. Push the repository to GitHub.
-2. Import the repository in the Vercel dashboard.
-3. Vercel detects Next.js automatically — the default build command
-   (`next build`) and output settings apply.
-4. Optionally add `GITHUB_TOKEN`, and `SITE_URL` once a custom domain is
-   attached, in the Vercel project settings (see
-   [Environment Variables](#environment-variables)); nothing is required.
-5. Deploy. Subsequent pushes to the default branch trigger new deployments.
+1. **Create a GitHub token** (recommended). Vercel's build machines share IP
+   addresses, and GitHub allows only 60 unauthenticated API requests an hour per
+   address. A rate-limited build makes the GitHub section show its failure
+   notice until the next hourly refresh. At
+   `github.com/settings/personal-access-tokens`, generate a fine-grained token
+   with repository access set to _Public repositories (read-only)_ and no other
+   permissions.
+2. **Import the repository.** In the Vercel dashboard, choose **Add New →
+   Project** and import `MFDOOMs/Portofolio`. The project name becomes the
+   default address, `<project-name>.vercel.app`, so choose the name you want in
+   the URL. Leave the framework preset (Next.js), root directory, and build
+   settings at their defaults.
+3. **Add the environment variable.** Under **Environment Variables**, add
+   `GITHUB_TOKEN` with the token as its value. `SITE_URL` isn't needed: Vercel
+   supplies the production domain at build time.
+4. **Deploy.** Afterwards, every push to `main` redeploys production, and
+   pushes to other branches get their own preview URLs.
+5. **Attach a custom domain** (optional) under **Settings → Domains**, then set
+   `SITE_URL` to it and redeploy so the canonical link, sitemap, and link
+   preview use it.
+
+After the first deployment, check the live site:
+
+- The GitHub section lists the repositories rather than its failure notice.
+- `/robots.txt` and `/sitemap.xml` show the production domain, not `localhost`.
+- `/opengraph-image` renders, and a link shared in a messaging app shows it.
+- The header links, the Menu button, and Copy address work.
 
 A production build can be verified locally first:
 
@@ -547,4 +582,4 @@ npm run start
 - [x] Phase 10 — Responsive & accessibility
 - [x] Phase 11 — SEO & performance
 - [x] Phase 12 — Final testing
-- [ ] Phase 13 — Vercel deployment
+- [x] Phase 13 — Vercel deployment preparation
