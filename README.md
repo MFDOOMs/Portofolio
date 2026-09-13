@@ -111,6 +111,43 @@ Copying uses the Clipboard API in a small Client Component. The result is
 announced to screen readers, and if the browser refuses, the button says so
 while the address stays selectable on the page.
 
+## Responsive & Accessibility
+
+The page was audited at 375, 768, 1024, and 1440px, in both light and dark
+mode, using the locally installed Chrome driven by Playwright. Each run applied
+axe-core's WCAG 2.2 AA rules plus best practices, checked for horizontal
+overflow, captured every section, dumped the heading outline, and walked the
+tab order with the keyboard.
+
+What the audit found, and what changed:
+
+- **Header at 768px** — six section links and the GitHub button squeezed the
+  name onto three lines, which spilled out of the fixed-height bar. The inline
+  section list now starts at `lg` (1024px), with the menu below it, and the
+  name never wraps.
+- **Header at 375px** — the name wrapped beside two buttons. Below `sm` the
+  GitHub button moves into the menu.
+- **Mobile menu** — Escape closed the panel but left keyboard focus on a link
+  that had just been hidden. Focus now returns to the Menu button.
+- **GitHub headings** — a screen reader's heading list read each repository as
+  "Portofolio (opens in a new tab)". The new-tab notice is now a description
+  on the link rather than part of its name.
+- **Contact** — the email address could break at any character on narrow
+  screens and now breaks before the `@`; the LinkedIn and GitHub links, 17px
+  tall, now have a larger hit area.
+- **Side panels** — the asides in Leadership and GitHub are labelled by their
+  headings.
+
+Verified after the changes, at every width in both color schemes: no axe
+violations and no horizontal overflow. The page has one `h1` and no skipped
+heading levels. Every stop in the tab order shows a focus outline and scrolls
+clear of the sticky header, the skip link moves focus to the main content, and
+`prefers-reduced-motion` turns smooth scrolling off.
+
+Automated contrast checking can't measure the hero, whose halftone dots sit
+behind the text; that text is ink on page stock, far above 4.5:1 in both
+schemes. The site has no images.
+
 ## Tech Stack
 
 | Layer      | Technology                                     |
@@ -138,7 +175,7 @@ Implemented so far:
 - Light and dark palettes driven by `prefers-color-scheme`
 - Reduced-motion support and a visible keyboard focus style
 - Sticky page header with the name, section anchors, and a GitHub call to action
-- Mobile section menu as a keyboard-accessible disclosure below `md`
+- Mobile section menu as a keyboard-accessible disclosure below `lg`
 - Skip-to-content link as the first focusable element on the page
 - Hero section introducing Tristan's identity, with GitHub and project CTAs
 - About section pairing a prose introduction with an at-a-glance detail panel
@@ -273,9 +310,10 @@ Calls to action follow the same rule. The hero's project button pointed at the
 GitHub repository list until the projects section existed, and now scrolls to
 it.
 
-The section list hides below `md` with `max-md:hidden` — one utility stating
-the intent — rather than `hidden md:block`, which sets a default and then
-overrides it.
+The section list hides below `lg` with `max-lg:hidden` — one utility stating
+the intent — rather than `hidden lg:block`, which sets a default and then
+overrides it. Below `sm` the header's GitHub button moves into the menu too, so
+the name always fits on one line.
 
 Anchor targets clear the sticky header via `scroll-padding-top` on the scroll
 container, sized from the same `--spacing-header` token the header uses.
@@ -401,7 +439,7 @@ npm run start
 - [x] Phase 7 — Leadership & experience
 - [x] Phase 8 — GitHub integration
 - [x] Phase 9 — Contact section
-- [ ] Phase 10 — Responsive & accessibility
+- [x] Phase 10 — Responsive & accessibility
 - [ ] Phase 11 — SEO & performance
 - [ ] Phase 12 — Final testing
 - [ ] Phase 13 — Vercel deployment

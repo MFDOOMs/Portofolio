@@ -61,6 +61,9 @@ async function GitHubContent() {
 
   return (
     <div className="gap-gutter grid lg:grid-cols-3">
+      <span id="github-new-tab" hidden>
+        Opens in a new tab
+      </span>
       <ul className="gap-gutter grid sm:grid-cols-2 lg:col-span-2">
         {data.repos.map((repo) => (
           <li key={repo.name}>
@@ -69,7 +72,7 @@ async function GitHubContent() {
         ))}
       </ul>
 
-      <aside className="lg:self-start">
+      <aside aria-labelledby="github-profile-heading" className="lg:self-start">
         <ProfilePanel profile={data.profile} repos={data.repos} />
       </aside>
     </div>
@@ -80,14 +83,17 @@ function RepoCard({ repo }: { repo: Repo }) {
   return (
     <Panel className="flex h-full flex-col">
       {/* Repository names are long unbroken strings; let them wrap anywhere. */}
+      {/* The new-tab notice is a description, not part of the link text, so
+          the heading reads as just the repository name in a screen reader's
+          list of headings. */}
       <h3 className="font-display text-xl [overflow-wrap:anywhere]">
         <a
           href={repo.url}
+          aria-describedby="github-new-tab"
           className="decoration-brass decoration-2 underline-offset-4 hover:underline"
           {...newTab}
         >
           {repo.name}
-          <span className="sr-only"> (opens in a new tab)</span>
         </a>
       </h3>
 
@@ -132,7 +138,10 @@ function ProfilePanel({
 
   return (
     <Panel>
-      <h3 className="font-display border-ink mb-4 border-b-2 pb-2 text-xl">
+      <h3
+        id="github-profile-heading"
+        className="font-display border-ink mb-4 border-b-2 pb-2 text-xl"
+      >
         @{profile.login}
       </h3>
       <dl className="divide-ink divide-y-2">

@@ -6,6 +6,8 @@ import { site } from "@/lib/site";
 
 const newTab = { target: "_blank", rel: "noreferrer noopener" } as const;
 
+const [emailLocalPart, emailDomain] = site.email.split("@");
+
 /** The profile handle at the end of the LinkedIn URL, shown as link text. */
 const linkedinHandle = new URL(site.linkedinUrl).pathname
   .split("/")
@@ -29,8 +31,12 @@ export function Contact() {
           <p className="max-w-[62ch] text-lg">
             Email me directly, or find me on LinkedIn and GitHub.
           </p>
+          {/* <wbr> makes the @ the preferred break on narrow screens; wrapping
+              anywhere stays as the fallback for widths too small for either
+              half. */}
           <p className="font-display mt-4 text-3xl [overflow-wrap:anywhere] sm:text-4xl">
-            {site.email}
+            {emailLocalPart}
+            <wbr />@{emailDomain}
           </p>
           <div className="mt-panel flex flex-wrap items-center gap-3">
             <ButtonLink href={`mailto:${site.email}`}>Send an email</ButtonLink>
@@ -54,7 +60,7 @@ export function Contact() {
               <dd className="mt-1">
                 <a
                   href={site.linkedinUrl}
-                  className="decoration-brass [overflow-wrap:anywhere] underline decoration-2 underline-offset-4"
+                  className="decoration-brass inline-block py-1 [overflow-wrap:anywhere] underline decoration-2 underline-offset-4"
                   {...newTab}
                 >
                   {linkedinHandle}
@@ -69,7 +75,7 @@ export function Contact() {
               <dd className="mt-1">
                 <a
                   href={site.githubUrl}
-                  className="decoration-brass underline decoration-2 underline-offset-4"
+                  className="decoration-brass inline-block py-1 underline decoration-2 underline-offset-4"
                   {...newTab}
                 >
                   @{site.githubUsername}

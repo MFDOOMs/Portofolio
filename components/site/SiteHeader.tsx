@@ -13,9 +13,11 @@ import { site } from "@/lib/site";
  * Only the mobile disclosure needs client JavaScript; it is isolated in
  * `MobileNav` so the rest of the header stays a Server Component.
  *
- * The section list hides below `md` with `max-md:hidden` rather than
- * `hidden md:block`: one utility that states the intent directly instead of
- * setting a default and then overriding it.
+ * The section list hides below `lg`, where six links and the name stop fitting
+ * on one line, using `max-lg:hidden` rather than `hidden lg:block`: one utility
+ * that states the intent instead of setting a default and overriding it. Below
+ * `sm` the GitHub button hides as well and moves into the menu, so the name
+ * never has to wrap inside the fixed-height bar.
  */
 export function SiteHeader() {
   return (
@@ -24,14 +26,14 @@ export function SiteHeader() {
         <div className="gap-gutter h-header flex items-center justify-between">
           <a
             href="#top"
-            className="font-display hover:text-brass-deep text-lg transition sm:text-xl"
+            className="font-display hover:text-brass-deep text-lg whitespace-nowrap transition sm:text-xl"
           >
             {site.name}
           </a>
 
           <div className="gap-gutter flex items-center">
             {readySections.length > 0 ? (
-              <nav aria-label="Sections" className="max-md:hidden">
+              <nav aria-label="Sections" className="max-lg:hidden">
                 <ul className="flex items-center gap-2">
                   {readySections.map((section) => (
                     <li key={section.id}>
@@ -53,6 +55,7 @@ export function SiteHeader() {
               rel="noreferrer noopener"
               variant="outline"
               size="sm"
+              className="max-sm:hidden"
             >
               GitHub
               <span className="sr-only"> profile (opens in a new tab)</span>

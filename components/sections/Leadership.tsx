@@ -44,9 +44,15 @@ export function Leadership() {
           ))}
         </ol>
 
-        <aside className="lg:self-start">
+        <aside
+          aria-labelledby="leadership-context-heading"
+          className="lg:self-start"
+        >
           <Panel>
-            <h3 className="font-display border-ink mb-4 border-b-2 pb-2 text-xl">
+            <h3
+              id="leadership-context-heading"
+              className="font-display border-ink mb-4 border-b-2 pb-2 text-xl"
+            >
               At HIMATIF
             </h3>
             <dl className="divide-ink divide-y-2">
