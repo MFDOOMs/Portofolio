@@ -14,5 +14,8 @@ export const site = {
   /** Public by Tristan's choice; the phone number on his CV is not. */
   email: "tristansilalahi09@gmail.com",
   linkedinUrl: "https://www.linkedin.com/in/tristan-silalahi-785669270/",
+  /** Tristan's CV, shared from his Google Drive for the public site. */
+  cvUrl:
+    "https://drive.google.com/file/d/1sngoLush2BfaJcxWIwEE6KpKi4hZL50U/view",
   location: "Sumedang, West Java, Indonesia",
 } as const;

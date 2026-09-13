@@ -109,11 +109,14 @@ Every state is handled:
 
 The contact section closes the page with Tristan's email address at display
 size, a button to send an email and one to copy the address, and a side panel
-with his LinkedIn and GitHub profiles, location, and time zone.
+with his CV, LinkedIn and GitHub profiles, location, and time zone.
 
 Only channels he has provided are listed, and he chose to show his email
-address publicly. The phone number on his CV is deliberately left off the page.
-Contact details live in `lib/site.ts` beside the rest of the site's identity.
+address publicly. The page itself doesn't show his phone number. The CV, linked
+from here and from the hero, is a PDF on his Google Drive; it does include the
+phone number, so to keep that private, replace the file with a version without
+it (Google Drive's "Manage versions" keeps the same link). Contact details and
+the CV link live in `lib/site.ts` beside the rest of the site's identity.
 
 Copying uses the Clipboard API in a small Client Component. The result is
 announced to screen readers, and if the browser refuses, the button says so
@@ -211,7 +214,7 @@ buttons, Send an email, and Copy address work; the copy is checked against the
 real clipboard, along with its visible and announced confirmation. Every
 repository and contact link points where it should, the GitHub section renders
 the live repositories, the robots, sitemap, preview-image, and icon routes
-respond, and no page logs a console error or a failed request. All 44 checks
+respond, and no page logs a console error or a failed request. All 46 checks
 pass.
 
 External links were also requested directly. Every GitHub URL returns 200.
@@ -278,7 +281,8 @@ content.
 - Sticky page header with the name, section anchors, and a GitHub call to action
 - Mobile section menu as a keyboard-accessible disclosure below `lg`
 - Skip-to-content link as the first focusable element on the page
-- Hero section introducing Tristan's identity, with GitHub and project CTAs
+- Hero section introducing Tristan's identity, with GitHub, CV, and project
+  links
 - About section pairing a prose introduction with an at-a-glance detail panel
 - Skills section grouping technical skills by purpose, without proficiency
   ratings
@@ -289,7 +293,7 @@ content.
 - GitHub section listing public repositories from the GitHub API, fetched on
   the server with hourly revalidation and loading, failure, and empty states
 - Contact section with the email address, send and copy actions, and links to
-  LinkedIn and GitHub
+  the CV, LinkedIn, and GitHub
 - Search and sharing metadata: title, description, canonical link, Open Graph
   and Twitter tags, a generated link-preview image, and theme colors
 - Custom favicon and Apple touch icon, `robots.txt`, `sitemap.xml`, and

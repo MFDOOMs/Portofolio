@@ -5,7 +5,8 @@ import { site } from "@/lib/site";
 
 /**
  * Opening statement: one strip of inked tape, the name at poster size, and
- * the two things a visitor is most likely to want next.
+ * the things a visitor is most likely to want next, in order of weight: the
+ * GitHub profile, the CV, then the projects further down the page.
  *
  * The halftone field runs only here — the loud moment on the page is the
  * first screen, and every section after it sits on plain stock.
@@ -31,7 +32,14 @@ export function Hero() {
             <span className="sr-only"> (opens in a new tab)</span>
           </ButtonLink>
 
-          <ButtonLink variant="outline" href="#projects">
+          <ButtonLink variant="outline" href={site.cvUrl} {...newTab}>
+            View CV
+            <span className="sr-only"> (opens Google Drive in a new tab)</span>
+          </ButtonLink>
+
+          {/* Below `sm` this wraps onto its own line, where the side padding
+              that widens its hit area would indent it from the buttons above. */}
+          <ButtonLink variant="quiet" href="#projects" className="max-sm:px-0">
             See projects
           </ButtonLink>
         </div>

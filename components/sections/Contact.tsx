@@ -54,6 +54,21 @@ export function Contact() {
           <dl className="divide-ink divide-y-2">
             <div className="pb-3">
               <dt className="text-brass-deep text-xs font-semibold uppercase">
+                CV
+              </dt>
+              <dd className="mt-1">
+                <a
+                  href={site.cvUrl}
+                  className="decoration-brass inline-block py-1 underline decoration-2 underline-offset-4"
+                  {...newTab}
+                >
+                  View on Google Drive
+                  <span className="sr-only"> (opens in a new tab)</span>
+                </a>
+              </dd>
+            </div>
+            <div className="py-3">
+              <dt className="text-brass-deep text-xs font-semibold uppercase">
                 LinkedIn
               </dt>
               <dd className="mt-1">
