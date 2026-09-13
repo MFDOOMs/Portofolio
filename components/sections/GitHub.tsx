@@ -3,9 +3,8 @@ import { Panel } from "@/components/ui/Panel";
 import { Section } from "@/components/ui/Section";
 import { TagList } from "@/components/ui/TagList";
 import { getGitHubData, type GitHubProfile, type Repo } from "@/lib/github";
+import { newTab } from "@/lib/links";
 import { site } from "@/lib/site";
-
-const newTab = { target: "_blank", rel: "noreferrer noopener" } as const;
 
 // Rendered on the server only; the fixed locale and UTC zone keep the output
 // the same on every build.

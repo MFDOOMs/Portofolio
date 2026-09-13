@@ -1,42 +1,14 @@
 /**
  * The portfolio is a single page, so navigation is a set of in-page anchors
- * rather than routes.
- *
- * Sections are built one per development phase, so each entry records whether
- * its target exists on the page yet. Only ready entries are rendered, which
- * keeps the navigation free of links that scroll nowhere. Flipping `ready` is
- * how a section joins the navigation once it is built.
+ * rather than routes. Declared in the order the sections appear on the page;
+ * each `id` matches the `id` on the rendered section element. The header and
+ * the mobile menu both render from this one list.
  */
-export type NavSection = {
-  /** Matches the `id` on the rendered section element. */
-  id: string;
-  label: string;
-  ready: boolean;
-};
-
-/** Declared in the order the sections appear on the page. */
-export const navSections: readonly NavSection[] = [
-  { id: "about", label: "About", ready: true },
-  { id: "skills", label: "Skills", ready: true },
-  { id: "projects", label: "Projects", ready: true },
-  { id: "leadership", label: "Leadership", ready: true },
-  { id: "github", label: "GitHub", ready: true },
-  { id: "contact", label: "Contact", ready: true },
-];
-
-/** The only sections that may be linked to. */
-export const readySections = navSections.filter((section) => section.ready);
-
-/**
- * Looks up a section so a call site can adapt to whether it exists yet — a
- * call-to-action can point elsewhere until its target is built.
- */
-export function getSection(id: string): NavSection {
-  const section = navSections.find((candidate) => candidate.id === id);
-
-  if (!section) {
-    throw new Error(`Unknown nav section: ${id}`);
-  }
-
-  return section;
-}
+export const navSections = [
+  { id: "about", label: "About" },
+  { id: "skills", label: "Skills" },
+  { id: "projects", label: "Projects" },
+  { id: "leadership", label: "Leadership" },
+  { id: "github", label: "GitHub" },
+  { id: "contact", label: "Contact" },
+] as const;

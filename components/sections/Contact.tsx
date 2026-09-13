@@ -2,9 +2,8 @@ import { ButtonLink } from "@/components/ui/Button";
 import { CopyButton } from "@/components/ui/CopyButton";
 import { Panel } from "@/components/ui/Panel";
 import { Section } from "@/components/ui/Section";
+import { newTab } from "@/lib/links";
 import { site } from "@/lib/site";
-
-const newTab = { target: "_blank", rel: "noreferrer noopener" } as const;
 
 const [emailLocalPart, emailDomain] = site.email.split("@");
 

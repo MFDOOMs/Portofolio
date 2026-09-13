@@ -19,7 +19,7 @@ export type GitHubProfile = {
   createdAt: string;
 };
 
-export type GitHubData =
+type GitHubData =
   | { status: "ok"; profile: GitHubProfile; repos: readonly Repo[] }
   | { status: "error" };
 

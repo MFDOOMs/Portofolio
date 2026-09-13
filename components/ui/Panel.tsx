@@ -9,7 +9,7 @@ const tones = {
   ink: "bg-ink text-paper",
 } as const;
 
-export type PanelTone = keyof typeof tones;
+type PanelTone = keyof typeof tones;
 
 type PanelProps = React.ComponentProps<"div"> & {
   tone?: PanelTone;

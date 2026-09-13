@@ -1,23 +1,7 @@
 import { ButtonLink } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
-import { getSection } from "@/lib/nav";
+import { newTab } from "@/lib/links";
 import { site } from "@/lib/site";
-
-/**
- * The projects call-to-action points at the in-page section once that section
- * exists, and at the GitHub repository list until then, so the control is
- * never a link to nothing.
- */
-const projects = getSection("projects");
-const projectsCta = projects.ready
-  ? { href: `#${projects.id}`, label: "See projects", external: false }
-  : {
-      href: site.githubReposUrl,
-      label: "See projects on GitHub",
-      external: true,
-    };
-
-const newTab = { target: "_blank", rel: "noreferrer noopener" } as const;
 
 /**
  * Opening statement: one strip of inked tape, the name at poster size, and
@@ -47,15 +31,8 @@ export function Hero() {
             <span className="sr-only"> (opens in a new tab)</span>
           </ButtonLink>
 
-          <ButtonLink
-            variant="outline"
-            href={projectsCta.href}
-            {...(projectsCta.external ? newTab : {})}
-          >
-            {projectsCta.label}
-            {projectsCta.external ? (
-              <span className="sr-only"> (opens in a new tab)</span>
-            ) : null}
+          <ButtonLink variant="outline" href="#projects">
+            See projects
           </ButtonLink>
         </div>
       </Container>

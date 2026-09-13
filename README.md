@@ -190,6 +190,59 @@ which compresses smaller than gzip. The remaining Lighthouse suggestions, about
 55 KB of unused and 13 KB of legacy JavaScript, are in the Next.js and React
 runtime chunks rather than this project's code.
 
+## Quality Checks
+
+The final pass audited functionality, code quality, performance,
+accessibility, and the build, and fixed what it found.
+
+**Functionality.** An automated browser run, Playwright driving the installed
+Chrome, clicks through the site at 1440, 768, and 375px. Every header and menu
+link lands on its section clear of the sticky header without reloading the
+page. The menu opens, closes on Escape, and closes after a choice. Both hero
+buttons, Send an email, and Copy address work; the copy is checked against the
+real clipboard, along with its visible and announced confirmation. Every
+repository and contact link points where it should, the GitHub section renders
+the live repositories, the robots, sitemap, preview-image, and icon routes
+respond, and no page logs a console error or a failed request. All 44 checks
+pass.
+
+External links were also requested directly. Every GitHub URL returns 200.
+LinkedIn answers automated requests with its bot-blocking status 999, so that
+link was checked against the one embedded in Tristan's CV instead.
+
+**Fixed in this pass:**
+
+- Header links on the 404 page were bare `#section` fragments that resolved
+  against the missing URL and went nowhere. They now link to `/#section`, and
+  the 404 page is a styled page with a way back instead of Next.js's default.
+- With every section built, the per-section `ready` flags, the hero's fallback
+  link, and the guards around an empty menu could no longer take effect, so
+  they were removed.
+- The `target` and `rel` pair for new-tab links, repeated across six components,
+  now comes from `lib/links.ts`, and exports that nothing imported are no
+  longer exported.
+- Header and menu links skip prefetching, since they point at the page that is
+  already open.
+
+**Code quality.** TypeScript, ESLint, and Prettier pass. knip finds no unused
+files, exports, or dependencies; its one remaining note, an "unlisted"
+`postcss`, is a false positive, since the PostCSS config only names the
+Tailwind plugin. `npm audit` reports no vulnerabilities. The project has three
+runtime dependencies (`next`, `react`, and `react-dom`) and two Client
+Components, the mobile menu and the copy button.
+
+**Performance.** The page loads 14.6 KB of compressed HTML, 136 KB of
+compressed JavaScript across eight framework chunks, 5.3 KB of CSS, and two
+preloaded fonts totalling 46 KB. It has no `<img>` elements; the only raster
+images are the generated link preview and touch icon.
+
+**Accessibility.** Re-audited at four widths in both color schemes: no axe
+violations, no horizontal overflow, a visible focus outline on every tab stop,
+a working skip link, and one `h1` with no skipped heading levels.
+
+**Build.** `next build` succeeds, with every route prerendered as static
+content.
+
 ## Tech Stack
 
 | Layer      | Technology                                     |
@@ -235,6 +288,7 @@ Implemented so far:
   and Twitter tags, a generated link-preview image, and theme colors
 - Custom favicon and Apple touch icon, `robots.txt`, `sitemap.xml`, and
   schema.org Person structured data
+- Styled 404 page inside the site layout, with navigation that still works
 
 Planned features are tracked in [Development Progress](#development-progress).
 
@@ -339,22 +393,17 @@ reduce` collapses all transitions and animations.
 ## Navigation
 
 The portfolio is a single page, so navigation is a set of in-page anchors
-rather than routes. `lib/nav.ts` declares the sections in page order and
-records whether each one exists yet:
+rather than routes. `lib/nav.ts` declares the six sections once, in page order,
+and the header and the mobile menu both render from that list.
 
-```ts
-{ id: "contact", label: "Contact", ready: true }
-```
+While the page was built one section per phase, each entry carried a `ready`
+flag so the navigation never linked to a section that didn't exist yet. With
+every section built, that gate was removed in the final quality pass.
 
-Only sections marked `ready` are rendered in the header, the mobile menu, and
-any call to action that targets them — the navigation therefore never contains
-a link that scrolls nowhere while the page is still being built. Building a
-section means adding it to the page and flipping its flag to `true`. All six
-sections are now built, so every flag is `true`.
-
-Calls to action follow the same rule. The hero's project button pointed at the
-GitHub repository list until the projects section existed, and now scrolls to
-it.
+Section links are `next/link` links to `/#section` rather than bare `#section`
+fragments. On the home page they jump in place without reloading; from any other
+URL, such as the 404 page, they return to the home page at that section, where
+a bare fragment would have scrolled nowhere.
 
 The section list hides below `lg` with `max-lg:hidden` — one utility stating
 the intent — rather than `hidden lg:block`, which sets a default and then
@@ -373,6 +422,7 @@ container, sized from the same `--spacing-header` token the header uses.
 │   ├── globals.css       # Tailwind entry point, design tokens, base styles
 │   ├── icon.svg          # Favicon: "T" monogram with a dark-mode variant
 │   ├── layout.tsx        # Root layout: fonts, metadata, viewport, page shell
+│   ├── not-found.tsx     # 404 page inside the site layout
 │   ├── opengraph-image.tsx # Link-preview image, generated at build
 │   ├── page.tsx          # Home page and its structured data
 │   ├── robots.ts         # robots.txt, pointing at the sitemap
@@ -404,7 +454,8 @@ container, sized from the same `--spacing-header` token the header uses.
 │   ├── github.ts         # Server-side GitHub API client, cached hourly
 │   ├── google-font.ts    # TrueType Google Fonts for generated images
 │   ├── leadership.ts     # Roles, organization context, and soft skills
-│   ├── nav.ts            # Section list and readiness flags
+│   ├── links.ts          # Shared attributes for links that open a new tab
+│   ├── nav.ts            # Section list shared by the header and the menu
 │   ├── projects.ts       # Project content, each figure from its repository
 │   ├── site.ts           # Site identity: name, GitHub, email, LinkedIn, location
 │   ├── site-url.ts       # Absolute site origin, from SITE_URL or Vercel
@@ -495,5 +546,5 @@ npm run start
 - [x] Phase 9 — Contact section
 - [x] Phase 10 — Responsive & accessibility
 - [x] Phase 11 — SEO & performance
-- [ ] Phase 12 — Final testing
+- [x] Phase 12 — Final testing
 - [ ] Phase 13 — Vercel deployment

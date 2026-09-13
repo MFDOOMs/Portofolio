@@ -2,9 +2,8 @@ import { ButtonLink } from "@/components/ui/Button";
 import { Panel } from "@/components/ui/Panel";
 import { TagList } from "@/components/ui/TagList";
 import { cn } from "@/lib/cn";
+import { newTab } from "@/lib/links";
 import type { Project } from "@/lib/projects";
-
-const newTab = { target: "_blank", rel: "noreferrer noopener" } as const;
 
 /**
  * One project, read top to bottom in the order a reviewer asks: what is it,

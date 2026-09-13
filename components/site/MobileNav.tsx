@@ -1,10 +1,12 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
-import { readySections } from "@/lib/nav";
+import { newTab } from "@/lib/links";
+import { navSections } from "@/lib/nav";
 import { site } from "@/lib/site";
 
 /**
@@ -36,10 +38,6 @@ export function MobileNav() {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [open]);
 
-  // A menu button with an empty menu is a broken control, so render nothing
-  // until at least one section exists to link to.
-  if (readySections.length === 0) return null;
-
   return (
     <>
       <Button
@@ -62,23 +60,23 @@ export function MobileNav() {
       >
         <Container>
           <ul className="py-gutter grid gap-1">
-            {readySections.map((section) => (
+            {navSections.map((section) => (
               <li key={section.id}>
-                <a
-                  href={`#${section.id}`}
+                <Link
+                  href={`/#${section.id}`}
+                  prefetch={false}
                   onClick={() => setOpen(false)}
                   className="hover:bg-ink hover:text-paper block px-2 py-2 font-semibold uppercase transition"
                 >
                   {section.label}
-                </a>
+                </Link>
               </li>
             ))}
             <li className="border-ink mt-2 border-t-2 pt-3 sm:hidden">
               <a
                 href={site.githubUrl}
-                target="_blank"
-                rel="noreferrer noopener"
                 className="hover:bg-ink hover:text-paper block px-2 py-2 font-semibold uppercase transition"
+                {...newTab}
               >
                 GitHub profile
                 <span className="sr-only"> (opens in a new tab)</span>
